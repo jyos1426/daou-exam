@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.OrgMapper">
+    <resultMap id="BaseResultMap" type="com.example.demo.vo.Organization">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="type" jdbcType="INTEGER" property="type" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="code" jdbcType="VARCHAR" property="code" />
+        <result column="manager" jdbcType="INTEGER" property="manager" />
+        <collection property="children" ofType="com.example.demo.vo.Organization" column="{id=id}" select="getChildren"></collection>
+    </resultMap>
+
+    <sql id="base_column_list">
+        id, type, name, code, manager, parent_id
+    </sql>
+
+    <!--  ${} 사용시 SQLinjection 에 취약 -->
+    <select id="getList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="base_column_list" />
+        , '${deptOnly}' as deptOnly
+        FROM organization
+        WHERE 1=1
+        <choose>
+            <when test="deptCode == null">        
+              AND id = 1
+            </when>
+            <otherwise>        
+              AND code = #{deptCode}
+            </otherwise>
+        </choose>
+        <!-- <if test="deptOnly == true">
+        AND type IN (0,1,2)
+        </if> -->
+    </select>
+
+    <select id="getChildren" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT
+        <include refid="base_column_list" />
+        FROM organization
+        WHERE organization.parent_id = #{id}
+        <!-- <if test="deptOnly == true">
+        AND type IN (0,1,2)
+        </if> -->
+    </select>
+</mapper>
