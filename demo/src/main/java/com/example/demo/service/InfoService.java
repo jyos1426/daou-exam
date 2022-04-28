@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import com.example.demo.model.City;
-import com.example.demo.model.Project;
 import com.example.demo.repository.CityRepository;
+import com.example.demo.vo.City;
+import com.example.demo.vo.Project;
 
 @Service
 public class InfoService {

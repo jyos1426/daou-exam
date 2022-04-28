@@ -1,31 +1,36 @@
 package com.example.demo.controller;
 
 import java.util.List;
-import com.example.demo.model.City;
-import com.example.demo.model.Project;
 import com.example.demo.service.InfoService;
-
+import com.example.demo.service.MemberService;
+import com.example.demo.vo.City;
+import com.example.demo.vo.Member;
+import com.example.demo.vo.Project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
+@RequestMapping("/api")
 public class InfoController {
 
     private InfoService infoService;
+    private MemberService memberService;
 
+    // 생성자 주입
     @Autowired
-    public InfoController(InfoService infoService) {
-        // 생성자 주입 이유
-        // 순환참조 방지 : A가 B를 참조하고 B가 A를 참조할 때의 문제
-        // 테스트하기에 좋음
-        // final 선언 가능
-        // 오류 방지 : 불변 객체 (final) 또는 null 방지 가능
+    public InfoController(InfoService infoService, MemberService memberService) {
+        // 불변 객체 (final) 또는 null 방지 가능
+        // 테스트 코드의 작성
+        // final 키워드 작성 및 Lombok과의 결합
+        // 순환 참조 에러 방지
 
         this.infoService = infoService;
+        this.memberService = memberService;
     }
 
-    @GetMapping("/api/info")
+    @GetMapping("/info")
     public Object projectInfo() {
         Project project = infoService.getProjectInfo();
         return project;
@@ -35,5 +40,11 @@ public class InfoController {
     public Object cityList() {
         List<City> cityList = infoService.getCityList();
         return cityList;
+    }
+
+    @GetMapping("/memberList")
+    public Object memberList() {
+        List<Member> memberList = memberService.getMemberList();
+        return memberList;
     }
 }
