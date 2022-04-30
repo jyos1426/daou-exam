@@ -1,16 +1,18 @@
 -- 조직 테이블 
-DROP TABLE IF EXISTS organization;
-CREATE TABLE organization (    
-    id INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    code VARCHAR(8),
-    name VARCHAR(10),
-    type INT(1),
-    manager INT(1) DEFAULT 0,
-    parent_id INT(10)
+DROP TABLE organization;
+DELETE FROM organization;
+CREATE TABLE organization(
+    id	NUMBER(10) NOT NULL,
+    code	VARCHAR2(8),
+    name	VARCHAR2(30),
+    TYPE	NUMBER(1),
+    manager	NUMBER(1) DEFAULT 0,
+    parent_id	NUMBER(10),
+    CONSTRAINT	org_pk	PRIMARY KEY (id)
 );
 
 -- 부서 INSERT
-INSERT INTO organization ( id, code, name, type, manager, parent_id ) VALUES( 1 , 'A00000', '다우기술', 0, 0, NULL );
+INSERT INTO organization ( id, code, name, type, manager, parent_id ) VALUES( 1 , 'A00000', 'ABC회사', 0, 0, NULL );
 INSERT INTO organization ( id, code, name, type, manager, parent_id ) VALUES( 2 , 'A10000', '경영지원본부', 1, 0, 1 );
 INSERT INTO organization ( id, code, name, type, manager, parent_id ) VALUES( 3 , 'A11000', '인사팀', 2, 0, 2 );
 INSERT INTO organization ( id, code, name, type, manager, parent_id ) VALUES( 4 , 'A12000', '총무팀', 2, 0, 2 );

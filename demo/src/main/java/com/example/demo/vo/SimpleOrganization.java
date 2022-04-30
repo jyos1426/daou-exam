@@ -1,10 +1,9 @@
 package com.example.demo.vo;
 
-import java.util.List;
 import lombok.Data;
 
 @Data
-public class Organization {
+public class SimpleOrganization {
     private int id;
 
     private int type;
@@ -16,6 +15,4 @@ public class Organization {
     private Boolean manager;
 
     private int parentId;
-
-    private List<Organization> children;
 }
