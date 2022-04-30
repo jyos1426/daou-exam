@@ -1,9 +1,11 @@
 package com.example.demo.service;
 import com.example.demo.entity.OrganizationTree;
-
+import com.example.demo.error.ErrorCode;
+import com.example.demo.error.exception.CustomException;
 import com.example.demo.mapper.OrgMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,7 +35,39 @@ public class OrgService {
      */
     public OrganizationTree getOrgTree(String deptCode, boolean deptOnly, String searchType,
             String searchKeyword) {
-        List<OrganizationTree> getOrgTree = orgMapper.getOrgTree(deptCode, deptOnly, searchType, searchKeyword);
-        return getOrgTree.get(0);
+
+        List<OrganizationTree> orgTreeList = orgMapper.getOrgTree(null, false);
+        if(orgTreeList.size() == 0){
+            throw new CustomException(ErrorCode.BAD_REQUEST, "조회된 리스트가 없습니다. 조건을 확인해주세요.");            
+        }
+
+        if(!(searchKeyword == null || searchType == null)){
+            if(searchKeyword == null || searchType == null){
+                throw new CustomException(ErrorCode.BAD_REQUEST, "searchkeyword를 입력 시 searchType이 존재해야합니다.");            
+            }
+            List<Integer> searchedIdList = orgMapper.getOrgIdListByKeyword(searchType, searchKeyword);
+            
+            return filterOrgTree(orgTreeList.get(0), searchedIdList);
+        }
+        return orgTreeList.get(0);
+    }
+    
+    /**
+     * 조직도 필터링
+     * 
+     * @param upper
+     * @param conditionIds
+     * @return 필터링된 조직도
+     */
+    private OrganizationTree filterOrgTree(OrganizationTree upper, List<Integer> conditionIds){
+        List<OrganizationTree> filteredChildren = new ArrayList<OrganizationTree>();
+        
+        for(OrganizationTree childTree: upper.getChildren()){
+            if(conditionIds.indexOf(childTree.getOrgId()) >-1){
+                filteredChildren.add( filterOrgTree(childTree, conditionIds) );             
+            }
+        }
+        upper.setChildren(filteredChildren);
+        return upper;
     }
 }

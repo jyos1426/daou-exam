@@ -1,5 +1,6 @@
 package com.example.demo.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,28 +13,22 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DepartmentDto {
-    /**
-     * 조직 Id
-     */
+
+    @ApiModelProperty(value = "조직 Id", dataType = "int", required = false)
     private int orgId;
 
-    /**
-     * 상위 조직 Id
-     */
+    @ApiModelProperty(value = "상위 조직 Id", dataType = "int", required = true)
     private int parentOrgId;
 
-    /**
-     * 부서 이름
-     */
+    @ApiModelProperty(value = "부서 이름", dataType = "int", required = true)
     private String name;
 
-    /**
-     * 부서 코드
-     */
+    @ApiModelProperty(value = "부서 코드", dataType = "string", required = true)
     private String code;
 
     /**
-     * 부서 타입 (Company, Division, Department)
+     * Company, Division, Department
      */
+    @ApiModelProperty(value = "부서 타입", dataType = "int", required = true)
     private String type;
 }

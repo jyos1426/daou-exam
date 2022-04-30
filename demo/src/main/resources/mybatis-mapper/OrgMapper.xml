@@ -38,27 +38,25 @@
 
     <!-- Select Organization Tree -->
     <select id="getOrgTree" parameterType="java.util.Map" resultMap="dept_tree_node">
-        SELECT 
-        <include refid="org_tree_column_list" />, #{deptOnly} AS dept_only
+        SELECT
+        <include refid="org_tree_column_list" />
+        , #{deptOnly} AS dept_only
         FROM (
             SELECT o.org_id, o.parent_org_id, dept_name AS name, dept_type AS type, NULL AS manager, dept_code AS code
             FROM organization o
                 JOIN department d on o.org_id = d.org_id
-            <if test="deptOnly == false">
-                UNION all
+        <if test="deptOnly == false">
+                UNION ALL
                 SELECT o.org_id, o.parent_org_id, mem_name AS name, 'Manager' AS type, manager, NULL AS code
                 FROM organization o
                     JOIN member m on o.org_id = m.org_id
             </if>
         ) uni
         WHERE 1=1
-        <!-- Filter By 'deptCode', 'orgId'-->
+        <!-- Filter By 'deptCode' -->
         <choose>
             <when test="deptCode != null">
                 AND code = #{deptCode}
-            </when>
-            <when test="orgId != null">
-                AND org_id = #{orgId}
             </when>
             <otherwise>
                 AND org_id = 1
@@ -68,14 +66,15 @@
 
     <!-- Select Children -->
     <select id="getChildren" parameterType="java.util.Map" resultMap="dept_tree_node">
-        SELECT 
-        <include refid="org_tree_column_list" />, #{deptOnly} AS dept_only
+        SELECT
+        <include refid="org_tree_column_list" />
+        , #{deptOnly} AS dept_only
         FROM (
             SELECT o.org_id, o.parent_org_id, dept_name AS name, dept_type AS type, NULL AS manager, dept_code AS code
             FROM organization o
-                JOIN department d on o.org_id = d.org_id                
-            <!-- Filter By 'deptOnly'-->
-            <if test="deptOnly == false">
+                JOIN department d on o.org_id = d.org_id
+        <!-- Filter By 'deptOnly'-->
+        <if test="deptOnly == false">
                 UNION all
                 SELECT o.org_id, o.parent_org_id, mem_name AS name, 'Manager' AS type, manager, NULL AS code
                 FROM organization o
@@ -87,7 +86,34 @@
         </if>
     </select>
 
-    <!-- Select Organization Children Id List -->    
+
+    <!-- Select Organization Tree -->
+    <select id="getOrgIdListByKeyword" parameterType="java.util.Map" resultType="int">
+        SELECT DISTINCT org_id
+        FROM (
+            SELECT o.org_id, o.parent_org_id, dept_name AS name, dept_type AS type, dept_code AS code
+            FROM organization o
+                JOIN department d on o.org_id = d.org_id
+            UNION
+            SELECT o.org_id, o.parent_org_id, mem_name AS NAME, 'Member' AS type, NULL AS code
+            FROM organization o
+                JOIN member m on o.org_id = m.org_id
+        )
+        <!-- Filter By 'searchKeyword' -->
+        START WITH name LIKE '%${searchKeyword}%'
+        <!-- Filter By 'searchType' -->
+        <choose>
+            <when test='searchType.equals("dept")'>
+                AND type != 'Member'
+            </when>
+            <otherwise>
+                AND type = 'Member'
+            </otherwise>
+        </choose>
+        CONNECT BY PRIOR parent_org_id = org_id
+    </select>
+
+    <!-- Select Organization Children Id List -->
     <select id="getOrgChildrenIdList" parameterType="int" resultType="int">
         SELECT org_id
         FROM (
@@ -110,7 +136,7 @@
         FROM organization
         WHERE org_id = #{orgId}
     </select>
-  
+
     <!-- Insert Organization -->
     <insert id="insertOrganization" parameterType="Organization">
         INSERT INTO organization (

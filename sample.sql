@@ -17,7 +17,7 @@ CREATE TABLE department(
     org_id NUMBER(5) PRIMARY KEY,
     dept_code	VARCHAR2(8),
     dept_name	VARCHAR2(30),
-    dept_type	VARCHAR2(8),
+    dept_type	VARCHAR2(15),
 
     CONSTRAINT dep_id_fk FOREIGN KEY(org_id)
          REFERENCES organization(org_id) ON DELETE CASCADE
