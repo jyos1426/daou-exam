@@ -1,5 +1,13 @@
-package com.example.demo.error;
+package com.example.demo.error.exception;
 
+import com.example.demo.error.ErrorCode;
+
+/**
+ * 예외 처리 커스터마이징
+ *
+ * @author hyeon
+ * @since 2022-04-30
+ */
 public class CustomException extends RuntimeException {
 
     private ErrorCode errorCode;

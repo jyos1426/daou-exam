@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.DeptMapper">
+    <!--
+        Department(부서) SQL Mapper
+
+        @author hyeon
+        @since 2022-04-30
+    -->
+
+    <!-- Department Column list-->
+    <sql id="dept_column_list">
+        org_id, dept_code, dept_name, dept_type
+    </sql>
+
+    <!-- Insert Department -->
+    <insert id="insertDepartment" parameterType="Department">
+        INSERT INTO department (
+        <include refid="dept_column_list" />
+        ) VALUES (
+            #{orgId}, #{deptCode}, #{deptName}, #{deptType}
+        )
+    </insert>
+    
+    <!-- Update Department -->
+    <update id="updateDepartment" parameterType="Department">
+        UPDATE department
+        SET dept_code = #{deptCode},
+            dept_name = #{deptName},
+            dept_type = #{deptType}
+        WHERE org_id = #{orgId}
+    </update>
+</mapper>

@@ -3,6 +3,12 @@ package com.example.demo.error;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 에러 응답 Enum 정의
+ *
+ * @author hyeon
+ * @since 2022-04-30
+ */
 @Getter
 @Setter
 public class ErrorResponse {

@@ -1,6 +1,7 @@
 package com.example.demo.error;
 
 import java.util.NoSuchElementException;
+import com.example.demo.error.exception.CustomException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -8,14 +9,21 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+/**
+ * 에러 처리 Handler
+ *
+ * @author hyeon
+ * @since 2022-04-30
+ */
 @RestControllerAdvice
 @RestController
 public class ErrorControllerAdvice {
 
   /**
+   * 500 Internal Error Handler
    * 
    * @param e
-   * @return 500 Internal Error
+   * @return
    */
   @ExceptionHandler(value = Exception.class)
   @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
@@ -26,9 +34,10 @@ public class ErrorControllerAdvice {
   }
   
   /**
+   * 400 Bad Request Handler
    * 
    * @param e
-   * @return 400 Bad Request
+   * @return
    */
   @ExceptionHandler(value = NoSuchElementException.class)
   @ResponseStatus(value = HttpStatus.BAD_REQUEST)
@@ -40,9 +49,10 @@ public class ErrorControllerAdvice {
   }
   
   /**
+   * 500 Custom Error Handler
    * 
    * @param e
-   * @return 500 Custom Error
+   * @return
    */
   @ExceptionHandler(value = CustomException.class)
   @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)

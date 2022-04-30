@@ -4,6 +4,12 @@ import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * 에러 코드 Enum 정의
+ *
+ * @author hyeon
+ * @since 2022-04-30
+ */
 @RequiredArgsConstructor
 @Getter
 @JsonFormat(shape = Shape.OBJECT)

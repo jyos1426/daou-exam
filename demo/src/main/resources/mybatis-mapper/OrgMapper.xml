@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.OrgMapper">
+    <!--
+        Oranization(조직) SQL Mapper
+
+        @author hyeon
+        @since 2022-04-30
+    -->
+
+    <!-- Organization Tree ResultMap -->
+    <resultMap id="dept_tree_node" type="com.example.demo.entity.OrganizationTree" autoMapping="true">
+        <id column="org_id" jdbcType="INTEGER" property="orgId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="code" jdbcType="VARCHAR" property="code" />
+        <result column="manager" jdbcType="INTEGER" property="manager" />
+        <result column="dept_only" jdbcType="INTEGER" property="deptOnly" />
+        <collection property="children" ofType="com.example.demo.entity.OrganizationTree" column="{parentOrgId=org_id, deptOnly=dept_only}" select="getChildren"></collection>
+    </resultMap>
+
+    <!-- Organization ResultMap -->
+    <resultMap id="org_map" type="com.example.demo.entity.Organization" autoMapping="true">
+        <id column="org_id" jdbcType="INTEGER" property="orgId" />
+        <result column="org_type" jdbcType="VARCHAR" property="orgType" />
+        <result column="parent_org_id" jdbcType="INTEGER" property="parentOrgId" />
+    </resultMap>
+
+    <!-- Organization Tree Columns -->
+    <sql id="org_tree_column_list">
+        org_id, name, type, code, manager
+    </sql>
+
+    <!-- Organization DB Columns -->
+    <sql id="org_column_list">
+        org_id, org_type, parent_org_id
+    </sql>
+
+    <!-- Select Organization Tree -->
+    <select id="getOrgTree" parameterType="java.util.Map" resultMap="dept_tree_node">
+        SELECT 
+        <include refid="org_tree_column_list" />, #{deptOnly} AS dept_only
+        FROM (
+            SELECT o.org_id, o.parent_org_id, dept_name AS name, dept_type AS type, NULL AS manager, dept_code AS code
+            FROM organization o
+                JOIN department d on o.org_id = d.org_id
+            <if test="deptOnly == false">
+                UNION all
+                SELECT o.org_id, o.parent_org_id, mem_name AS name, 'Manager' AS type, manager, NULL AS code
+                FROM organization o
+                    JOIN member m on o.org_id = m.org_id
+            </if>
+        ) uni
+        WHERE 1=1
+        <!-- Filter By 'deptCode', 'orgId'-->
+        <choose>
+            <when test="deptCode != null">
+                AND code = #{deptCode}
+            </when>
+            <when test="orgId != null">
+                AND org_id = #{orgId}
+            </when>
+            <otherwise>
+                AND org_id = 1
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- Select Children -->
+    <select id="getChildren" parameterType="java.util.Map" resultMap="dept_tree_node">
+        SELECT 
+        <include refid="org_tree_column_list" />, #{deptOnly} AS dept_only
+        FROM (
+            SELECT o.org_id, o.parent_org_id, dept_name AS name, dept_type AS type, NULL AS manager, dept_code AS code
+            FROM organization o
+                JOIN department d on o.org_id = d.org_id                
+            <!-- Filter By 'deptOnly'-->
+            <if test="deptOnly == false">
+                UNION all
+                SELECT o.org_id, o.parent_org_id, mem_name AS name, 'Manager' AS type, manager, NULL AS code
+                FROM organization o
+                    JOIN member m on o.org_id = m.org_id
+            </if>
+        ) uni
+        <if test="parentOrgId != null">
+            WHERE uni.parent_org_id = #{parentOrgId}
+        </if>
+    </select>
+
+    <!-- Select Organization Children Id List -->    
+    <select id="getOrgChildrenIdList" parameterType="int" resultType="int">
+        SELECT org_id
+        FROM (
+            SELECT o.org_id, o.parent_org_id
+            FROM organization o
+                JOIN department d on o.org_id = d.org_id
+            UNION all
+            SELECT o.org_id, o.parent_org_id
+            FROM organization o
+                JOIN member m on o.org_id = m.org_id
+        )
+        START WITH org_id = #{orgId}
+        CONNECT BY PRIOR org_id = parent_org_id
+    </select>
+
+    <!-- Select One Organization By Id -->
+    <select id="getOrgById" parameterType="int" resultMap="org_map">
+        SELECT
+        <include refid="org_column_list" />
+        FROM organization
+        WHERE org_id = #{orgId}
+    </select>
+  
+    <!-- Insert Organization -->
+    <insert id="insertOrganization" parameterType="Organization">
+        INSERT INTO organization (
+            org_id, org_type, parent_org_id
+        ) VALUES (
+            org_id_seq.NEXTVAL, #{orgType}, #{parentOrgId}
+        )
+
+        /*  check result type */
+        <selectKey keyProperty="orgId" resultType="int" order="AFTER">
+            select org_id_seq.CURRVAL FROM DUAL
+        </selectKey>
+    </insert>
+
+    <!-- Update Organization -->
+    <update id="updateOrganization" parameterType="Organization">
+        UPDATE organization
+        SET org_type = #{orgType},
+            parent_org_id = #{parentOrgId}
+        WHERE org_id = #{orgId}
+    </update>
+
+    <!-- Delete Organizations -->
+    <delete id="deleteOrganization">
+        DELETE FROM organization WHERE org_id = #{orgId}
+    </delete>
+
+    <!-- Delete Organizations -->
+    <delete id="deleteOrganizations">
+        DELETE FROM organization 
+        WHERE org_id in
+        <foreach item="orgId" index="index" collection="orgIds" open="(" separator="," close=")">
+            #{orgId}
+        </foreach>
+    </delete>
+</mapper>
