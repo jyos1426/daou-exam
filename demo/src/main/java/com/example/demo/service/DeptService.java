@@ -58,7 +58,7 @@ public class DeptService {
             throw new CustomException(ErrorCode.BAD_REQUEST, "상위 부서가 정보가 올바르지 않습니다.");
         }
 
-        Organization orgInsertData = new Organization(dept);
+        Organization orgInsertData = new Organization(dept.getOrgId(), dept.getType(), dept.getParentOrgId());
 
         // Organizaton Table Insert
         orgMapper.insertOrganization(orgInsertData);
@@ -66,7 +66,7 @@ public class DeptService {
 
         // Department Table Insert
         dept.setOrgId(orgId);
-        Department deptEntity = new Department(dept);
+        Department deptEntity = new Department(dept.getOrgId(), dept.getCode(), dept.getName(), dept.getType());
         deptMapper.insertDepartment(deptEntity);
 
         return dept;
@@ -93,12 +93,12 @@ public class DeptService {
         // Note. 상위 부서 변경 시 조직도 테이블 함께 변경
         orgData = orgDataList.get(0);
         if (orgData.getParentOrgId() != dept.getParentOrgId()) {
-            Organization orgUpdateData = new Organization(dept);
+            Organization orgUpdateData = new Organization(dept.getOrgId(), dept.getType(), dept.getParentOrgId());
             orgMapper.updateOrganization(orgUpdateData);
         }
 
         // Department Table Update
-        Department deptEntity = new Department(dept);
+        Department deptEntity = new Department(dept.getOrgId(), dept.getCode(), dept.getName(), dept.getType());
         deptMapper.updateDepartment(deptEntity);
 
         return dept;

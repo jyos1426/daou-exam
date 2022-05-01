@@ -38,8 +38,7 @@ public class MemberService {
      * @return 추가된 사원 정보
      */
     public MemberDto addMember(MemberDto member) {
-        final String type = "Member";
-        Organization orgInsertData = new Organization(type, member);
+        Organization orgInsertData = new Organization("Member", member.getParentOrgId());
 
         // Exception. 상위 부서 정보 예외처리
         List<Organization> parentOrgList = orgMapper.getOrgById(member.getParentOrgId());
@@ -53,7 +52,7 @@ public class MemberService {
 
         // Member Table Insert
         member.setOrgId(orgId);
-        Member memberEntity = new Member(member);
+        Member memberEntity = new Member(member.getOrgId(), member.getName(), member.isManager());
         memberMapper.insertMember(memberEntity);
 
         return member;
@@ -81,12 +80,12 @@ public class MemberService {
         // Note. 팀 변경 시 조직도 테이블 함께 변경
         orgData = orgDataList.get(0);
         if (orgData.getParentOrgId() != member.getParentOrgId()) {
-            Organization orgUpdateData = new Organization(member);
+            Organization orgUpdateData = new Organization(member.getOrgId(), "Member", member.getParentOrgId());
             orgMapper.updateOrganization(orgUpdateData);
         }
 
         // Member Table Update
-        Member memberEntity = new Member(member);
+        Member memberEntity = new Member(member.getOrgId(), member.getName(), member.isManager());
         memberMapper.updateMember(memberEntity);
 
         return member;
