@@ -38,8 +38,8 @@ spring.jpa.properties.hibernate.format_sql=true
 # Set Mybatis mapper location
 mybatis.mapper-locations=classpath:mybatis-mapper/*.xml
 
-# Use entity aliases
-mybatis.type-aliases-package=com.example.demo.entity
+# Use vo aliases
+mybatis.type-aliases-package=com.example.demo.vo
 
 # For swagger error
 spring.mvc.pathmatch.matching-strategy=ANT_PATH_MATCHER
@@ -64,41 +64,3 @@ spring.mvc.pathmatch.matching-strategy=ANT_PATH_MATCHER
 ```js
 /org/organizations?deptCode=A00000&deptOnly=true
 ```
-- ### 부서 등록 POST /org/
-
-1. Request Body
-
-| Key | Type | Example | required |  Comment |
-| --- | --- | --- | --- | --- |
-| name | String | "A10000" | true | 사원명 |
-| parentOrgId | int | 10 | true | 상위 조직(부서) Id |
-| manager | boolean | "플랫폼" | true | 관리자 여부 |
-
-<details><summary>example (클릭)
-</summary>
-
-```json
-{
-    "name": "김다우",
-    "parentOrgId": 4,
-    "manager": false
-}
-```
-</details>
-
-
-2. Response
-```json
-{
-    "orgId": 44,
-    "parentOrgId": 4,
-    "name": "김다우1",
-    "type": "Member",
-    "manager": false
-}
-```
-- ### 부서 등록 PUT /org/
-- ### 부서 등록 DELETE /org/
-- ### 사원 등록 POST /org/
-- ### 사원 등록 PUT /org/
-- ### 사원 등록 DELETE /org/

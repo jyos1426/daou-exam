@@ -14,18 +14,18 @@ import lombok.Setter;
 @Setter
 public class MemberDto {
 
-    @ApiModelProperty(value = "조직 Id", dataType = "int", required = false)
+    @ApiModelProperty(notes = "조직 Id", dataType = "Integer", required = false, example = "null")
     private int orgId;
 
-    @ApiModelProperty(value = "상위 조직 Id", dataType = "int", required = true)
+    @ApiModelProperty(notes = "상위 조직 Id", dataType = "Integer", required = true, example = "10")
     private int parentOrgId;
 
-    @ApiModelProperty(value = "사원명", dataType = "string", required = true)
+    @ApiModelProperty(notes = "사원명", dataType = "String", required = true, example = "김다우")
     private String name;
 
-    @ApiModelProperty(value = "조직 유형", dataType = "string", required = false)
+    @ApiModelProperty(notes = "조직 유형", dataType = "String", required = false, example = "Manager")
     private String type;
 
-    @ApiModelProperty(value = "관리자 여부", dataType = "boolean", required = false)
+    @ApiModelProperty(notes = "관리자 여부", dataType = "boolean", required = true, example = "false")
     private boolean manager;
 }

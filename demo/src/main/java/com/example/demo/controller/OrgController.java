@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 /**
  * 조직도 API Controller
@@ -17,6 +19,7 @@ import io.swagger.annotations.ApiOperation;
  * @author hyeon
  * @since 2022-04-30
  */
+@Api(tags = "OrgController", description = "조직도 조회 Controller")
 @RequestMapping("/org")
 @Controller
 public class OrgController {
@@ -29,8 +32,6 @@ public class OrgController {
     }
 
     /**
-     * 조직도 트리 데이터 조회 API
-     * 
      * @param deptCode 최상위 부서 코드
      * @param deptOnly 부서 정보만 응답 여부
      * @param searchType 검색어 적용 대상 ("dept": 부서, "member": 부서원)
@@ -41,11 +42,14 @@ public class OrgController {
     @GetMapping("/organizations")
     @ResponseBody
     public OrganizationDto getOrgTree(
-            @RequestParam(value = "deptCode", required = false) String deptCode,
-            @RequestParam(value = "deptOnly", required = false,
-                    defaultValue = "false") Boolean deptOnly,
-            @RequestParam(value = "searchType", required = false) String searchType,
-            @RequestParam(value = "searchKeyword", required = false) String searchKeyword) {
+            @RequestParam(value = "deptCode", required = false)
+            @ApiParam(value = "최상위 부서 코드", required = false) String deptCode,
+            @RequestParam(value = "deptOnly", required = false, defaultValue = "false") 
+            @ApiParam( value = "부서 정보만 응답 여부", required = false) Boolean deptOnly,
+            @RequestParam(value = "searchType", required = false) 
+            @ApiParam(value = "검색어 적용 대상 (dept: 부서, member: 부서원)", required = true) String searchType,
+            @RequestParam(value = "searchKeyword", required = false) 
+            @ApiParam(value = "검색어", required = false) String searchKeyword) {
 
         OrganizationDto treeData =
                 orgService.getOrgTree(deptCode, deptOnly, searchType, searchKeyword);
