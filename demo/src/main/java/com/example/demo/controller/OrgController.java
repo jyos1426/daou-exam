@@ -2,16 +2,16 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.OrganizationDto;
 import com.example.demo.service.OrgService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.RequiredArgsConstructor;
 
 /**
  * 조직도 API Controller
@@ -21,15 +21,11 @@ import io.swagger.annotations.ApiParam;
  */
 @Api(tags = "OrgController", description = "조직도 조회 Controller")
 @RequestMapping("/org")
-@Controller
+@RestController
+@RequiredArgsConstructor
 public class OrgController {
-
+    
     final private OrgService orgService;
-
-    @Autowired
-    public OrgController(OrgService orgService) {
-        this.orgService = orgService;
-    }
 
     /**
      * @param deptCode 최상위 부서 코드

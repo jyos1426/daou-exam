@@ -10,11 +10,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import lombok.RequiredArgsConstructor;
 
 /**
  * 사원 API Controller
@@ -24,15 +25,11 @@ import org.springframework.stereotype.Controller;
  */
 @Api(tags = "MemberController", description = "사원 CUD Controller")
 @RequestMapping("/org")
-@Controller
+@RestController
+@RequiredArgsConstructor
 public class MemberController {
 
     final private MemberService memberService;
-
-    @Autowired
-    public MemberController(MemberService memberService) {
-        this.memberService = memberService;
-    }
 
     /**
      * @param member 추가할 사원 정보

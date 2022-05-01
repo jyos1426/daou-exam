@@ -4,8 +4,6 @@ import java.util.List;
 import com.example.demo.dto.DepartmentDto;
 
 import com.example.demo.service.DeptService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.RequiredArgsConstructor;
 
 /**
  * 부서 API Controller
@@ -27,15 +27,11 @@ import io.swagger.annotations.ApiParam;
  */
 @Api(tags = "DeptController", description = "부서 CUD Controller")
 @RequestMapping("/org")
-@Controller
+@RestController
+@RequiredArgsConstructor
 public class DeptController {
 
-    private DeptService deptService;
-
-    @Autowired
-    public DeptController(DeptService deptService) {
-        this.deptService = deptService;
-    }
+    final private DeptService deptService;
 
     /**
      * @param dept 추가할 부서 정보
