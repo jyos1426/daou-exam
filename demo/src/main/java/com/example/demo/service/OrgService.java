@@ -1,12 +1,14 @@
 package com.example.demo.service;
 
+import com.example.demo.mapper.OrgMapper;
 import com.example.demo.domain.OrganizationInfo;
 import com.example.demo.dto.OrganizationDto;
-import com.example.demo.error.ErrorCode;
 import com.example.demo.error.exception.CustomException;
-import com.example.demo.mapper.OrgMapper;
+import com.example.demo.enums.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,33 +41,33 @@ public class OrgService {
             String searchKeyword) {
 
         // 최상위 노드 조회 (searchKeyword 가 있을 경우에는 최상위 노드 = 회사)
-        List<OrganizationInfo> orgTopNodeList =
-                orgMapper.getOrgTopNode(searchKeyword == null ? deptCode : null);
-        if (orgTopNodeList.size() == 0) {
+        OrganizationInfo orgTopNode =
+                orgMapper.getOrgTopNode(StringUtils.hasText(searchKeyword) ? deptCode : null);
+        if (orgTopNode == null) {
             throw new CustomException(ErrorCode.BAD_REQUEST,
                     "'" + deptCode + "'코드로 조회된 리스트가 없습니다. 조건을 확인해주세요.");
         }
 
         // searchKeyword와 searchType이 있을 경우, 필터링할 idList Select
         List<Integer> searchedIdList = null;
-        if (!(searchKeyword == null || searchType == null)) {
-            if (searchKeyword == null || searchType == null) {
+        if (StringUtils.hasText(searchKeyword) || StringUtils.hasText(searchType)) {
+            if (! (StringUtils.hasText(searchKeyword) && StringUtils.hasText(searchType)) ) {
                 throw new CustomException(ErrorCode.BAD_REQUEST,
                         "searchkeyword를 입력 시 searchType이 존재해야합니다.");
             }
             searchedIdList = orgMapper.getOrgIdListByKeyword(searchType, searchKeyword);
-            if (searchedIdList.size() == 0) {
+            if (searchedIdList.isEmpty()) {
                 throw new CustomException(ErrorCode.BAD_REQUEST,
                         "'" + searchKeyword + "' 검색어로 조회된 리스트가 없습니다.");
             }
         }
 
         // 재귀 방식으로 Children 조회
-        OrganizationDto orgTopNode = new OrganizationDto(orgTopNodeList.get(0));
-        orgTopNode.setChildren(
-                getChildrenByParentId(orgTopNode.getOrgId(), deptOnly, searchedIdList));
+        OrganizationDto orgTopNodeTree = new OrganizationDto(orgTopNode);
+        orgTopNodeTree.setChildren(
+                getChildrenByParentId(orgTopNodeTree.getOrgId(), deptOnly, searchedIdList));
 
-        return orgTopNode;
+        return orgTopNodeTree;
     }
 
     /**

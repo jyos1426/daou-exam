@@ -5,12 +5,11 @@ import com.example.demo.domain.Organization;
 import com.example.demo.dto.MemberDto;
 import com.example.demo.mapper.MemberMapper;
 import com.example.demo.mapper.OrgMapper;
-import com.example.demo.error.ErrorCode;
 import com.example.demo.error.exception.CustomException;
+import com.example.demo.enums.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 /**
  * 사원 Service 클래스
@@ -20,7 +19,7 @@ import java.util.List;
  */
 @Service
 public class MemberService {
-    static final String ORG_TYPE_MEMBER = "Member" ;
+    static final String ORG_TYPE_MEMBER = OrgType.MEMBER.getCode();
 
     @Autowired
     MemberMapper memberMapper;
@@ -43,8 +42,8 @@ public class MemberService {
         Organization orgInsertData = new Organization(ORG_TYPE_MEMBER, member.getParentOrgId());
 
         // Exception. 상위 부서 정보 예외처리
-        List<Organization> parentOrgList = orgMapper.getOrgById(member.getParentOrgId());
-        if (parentOrgList.size() == 0 || parentOrgList.get(0).getOrgType() == "Manager") {
+        Organization parentOrg = orgMapper.getOrgById(member.getParentOrgId());
+        if (parentOrg == null || parentOrg.isMember()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "상위 부서가 정보가 올바르지 않습니다.");
         }
 
@@ -54,7 +53,7 @@ public class MemberService {
 
         // Member Table Insert
         member.setOrgId(orgId);
-        Member memberEntity = new Member(member.getOrgId(), member.getName(), member.isManager());
+        Member memberEntity = member.toEntity();
         memberMapper.insertMember(memberEntity);
 
         return member;
@@ -69,25 +68,23 @@ public class MemberService {
      */
     public MemberDto modifyMember(int orgId, MemberDto member) {
         // Exception. 사원 정보 예외처리
-        List<Organization> orgDataList = orgMapper.getOrgById(orgId);
-        if (orgDataList.isEmpty()) {
+        Organization orgData = orgMapper.getOrgById(orgId);
+        if (orgData == null) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "사원(" + orgId + ")이 존재하지 않습니다.");
         }
 
-        Organization orgData = orgDataList.get(0);
-        if (orgData.isMember()) {
+        if (!orgData.isMember()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "코드(" + orgId + ")는 사원 데이터가 아닙니다.");
         }
 
         // Note. 팀 변경 시 조직도 테이블 함께 변경
-        orgData = orgDataList.get(0);
         if (orgData.getParentOrgId() != member.getParentOrgId()) {
             Organization orgUpdateData = new Organization(member.getOrgId(), ORG_TYPE_MEMBER, member.getParentOrgId());
             orgMapper.updateOrganization(orgUpdateData);
         }
 
         // Member Table Update
-        Member memberEntity = new Member(member.getOrgId(), member.getName(), member.isManager());
+        Member memberEntity = member.toEntity();
         memberMapper.updateMember(memberEntity);
 
         return member;
@@ -101,12 +98,11 @@ public class MemberService {
      */
     public int deleteMember(int orgId) {
         // Exception. 사원 정보 예외처리
-        List<Organization> orgDataList = orgMapper.getOrgById(orgId);
-        if (orgDataList.isEmpty()) {
+        Organization orgData = orgMapper.getOrgById(orgId);
+        if (orgData == null) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "사원(" + orgId + ")이 존재하지 않습니다.");
         }
 
-        Organization orgData = orgDataList.get(0);
         if (orgData.isMember()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "코드(" + orgId + ")는 사원 데이터가 아닙니다.");
         }

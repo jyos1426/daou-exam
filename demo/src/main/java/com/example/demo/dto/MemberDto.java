@@ -1,5 +1,6 @@
 package com.example.demo.dto;
 
+import com.example.demo.domain.Member;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,9 +24,13 @@ public class MemberDto {
     @ApiModelProperty(notes = "사원명", dataType = "String", required = true, example = "김다우")
     private String name;
 
-    @ApiModelProperty(notes = "조직 유형", dataType = "String", required = false, example = "Manager")
+    @ApiModelProperty(notes = "조직 유형", dataType = "String", required = false, example = "Member")
     private String type;
 
     @ApiModelProperty(notes = "관리자 여부", dataType = "boolean", required = true, example = "false")
     private boolean manager;
+
+    public Member toEntity() {
+        return new Member(orgId, name, manager);
+    }
 }

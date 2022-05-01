@@ -1,5 +1,6 @@
 package com.example.demo.dto;
 
+import com.example.demo.domain.Department;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -33,4 +34,8 @@ public class DepartmentDto {
      */
     @ApiModelProperty(value = "부서 타입", dataType = "String", required = true, example = "Division")
     private String type;
+    
+    public Department toEntity() {
+        return new Department(orgId, code, name, type);
+    }
 }

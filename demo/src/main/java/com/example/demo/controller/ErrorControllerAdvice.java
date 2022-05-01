@@ -1,7 +1,10 @@
-package com.example.demo.error;
+package com.example.demo.controller;
 
 import java.util.NoSuchElementException;
 import com.example.demo.error.exception.CustomException;
+import com.example.demo.error.ErrorResponse;
+import com.example.demo.enums.*;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

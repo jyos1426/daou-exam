@@ -1,4 +1,5 @@
 package com.example.demo.error;
+import com.example.demo.enums.*;
 
 import lombok.Getter;
 import lombok.Setter;

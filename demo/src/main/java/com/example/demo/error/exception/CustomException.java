@@ -1,6 +1,6 @@
 package com.example.demo.error.exception;
 
-import com.example.demo.error.ErrorCode;
+import com.example.demo.enums.*;
 
 /**
  * 예외 처리 커스터마이징

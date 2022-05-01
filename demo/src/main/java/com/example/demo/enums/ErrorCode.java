@@ -1,4 +1,4 @@
-package com.example.demo.error;
+package com.example.demo.enums;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import lombok.Getter;

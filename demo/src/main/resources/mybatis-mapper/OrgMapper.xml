@@ -108,7 +108,7 @@
     </select>
 
     <!-- Select Organization Children Id List -->
-    <select id="getOrgChildrenIdList" parameterType="int" resultType="int">
+    <select id="findOrgChildrenIdList" parameterType="int" resultType="int">
         SELECT org_id
         FROM (
             SELECT o.org_id, o.parent_org_id

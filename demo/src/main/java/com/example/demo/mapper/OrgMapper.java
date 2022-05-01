@@ -22,7 +22,7 @@ public interface OrgMapper {
      * @param deptOnly
      * @return
      */
-    List<OrganizationInfo> getOrgTopNode(String deptCode);
+    OrganizationInfo getOrgTopNode(String deptCode);
 
     /**
      * 조직 트리 자식 Node Select (옵션에 따라 사원 테이블 포함)
@@ -49,7 +49,7 @@ public interface OrgMapper {
      * @param orgId
      * @return
      */
-    List<Organization> getOrgById(int orgId);
+    Organization getOrgById(int orgId);
 
     /**
      * Id와 매칭되는 조직의 하위 조직 Id Select
@@ -57,7 +57,7 @@ public interface OrgMapper {
      * @param orgId
      * @return
      */
-    List<Integer> getOrgChildrenIdList(int orgId);
+    List<Integer> findOrgChildrenIdList(int orgId);
 
     /**
      * 조직 Insert

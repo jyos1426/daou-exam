@@ -5,8 +5,8 @@ import com.example.demo.domain.Organization;
 import com.example.demo.dto.DepartmentDto;
 import com.example.demo.mapper.DeptMapper;
 import com.example.demo.mapper.OrgMapper;
-import com.example.demo.error.ErrorCode;
 import com.example.demo.error.exception.CustomException;
+import com.example.demo.enums.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,9 +43,9 @@ public class DeptService {
 
         // Exception. Type 값 Validation
         List<String> allowTypeList = new ArrayList<String>();
-        allowTypeList.add("Division");
-        allowTypeList.add("Team");
-        allowTypeList.add("Company");
+        allowTypeList.add(OrgType.DIVISION.getCode());
+        allowTypeList.add(OrgType.TEAM.getCode());
+        allowTypeList.add(OrgType.COMPANY.getCode());
 
         if (allowTypeList.indexOf(dept.getType()) < 0) {
             throw new CustomException(ErrorCode.BAD_REQUEST,
@@ -53,8 +53,8 @@ public class DeptService {
         }
 
         // Exception. 상위 부서 정보 예외처리
-        List<Organization> parentOrgList = orgMapper.getOrgById(dept.getParentOrgId());
-        if (parentOrgList.size() == 0 || parentOrgList.get(0).getOrgType() == "Manager") {
+        Organization parentOrg = orgMapper.getOrgById(dept.getParentOrgId());
+        if (parentOrg == null || parentOrg.isMember()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "상위 부서가 정보가 올바르지 않습니다.");
         }
 
@@ -66,7 +66,7 @@ public class DeptService {
 
         // Department Table Insert
         dept.setOrgId(orgId);
-        Department deptEntity = new Department(dept.getOrgId(), dept.getCode(), dept.getName(), dept.getType());
+        Department deptEntity = dept.toEntity();
         deptMapper.insertDepartment(deptEntity);
 
         return dept;
@@ -80,25 +80,23 @@ public class DeptService {
      */
     public DepartmentDto modifyDepartment(int orgId, DepartmentDto dept) {
         // Exception. 부서 정보 예외 처리
-        List<Organization> orgDataList = orgMapper.getOrgById(orgId);
-        if (orgDataList.isEmpty()) {
+        Organization orgData = orgMapper.getOrgById(orgId);
+        if (orgData == null) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "부서(" + orgId + ")가 존재하지 않습니다.");
         }
 
-        Organization orgData = orgDataList.get(0);
         if (orgData.isMember()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "코드(" + orgId + ")는 부서 데이터가 아닙니다.");
         }
 
         // Note. 상위 부서 변경 시 조직도 테이블 함께 변경
-        orgData = orgDataList.get(0);
         if (orgData.getParentOrgId() != dept.getParentOrgId()) {
             Organization orgUpdateData = new Organization(dept.getOrgId(), dept.getType(), dept.getParentOrgId());
             orgMapper.updateOrganization(orgUpdateData);
         }
 
         // Department Table Update
-        Department deptEntity = new Department(dept.getOrgId(), dept.getCode(), dept.getName(), dept.getType());
+        Department deptEntity = dept.toEntity();
         deptMapper.updateDepartment(deptEntity);
 
         return dept;
@@ -112,18 +110,17 @@ public class DeptService {
      */
     public List<Integer> deleteDepartment(int orgId, boolean force) {
         // Exception. 부서 정보 예외 처리
-        List<Organization> orgDataList = orgMapper.getOrgById(orgId);
-        if (orgDataList.isEmpty()) {
+        Organization orgData = orgMapper.getOrgById(orgId);
+        if (orgData == null) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "부서(" + orgId + ")가 존재하지 않습니다.");
         }
 
-        Organization orgData = orgDataList.get(0);
         if (orgData.isMember()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "코드(" + orgId + ")는 부서 데이터가 아닙니다.");
         }
 
         // 하위 조직 확인
-        List<Integer> childrenIdList = orgMapper.getOrgChildrenIdList(orgId);
+        List<Integer> childrenIdList = orgMapper.findOrgChildrenIdList(orgId);
         if (childrenIdList.size() > 1 && !force) {
             throw new CustomException(ErrorCode.BAD_REQUEST,
                     "하위 데이터가 존재합니다. 삭제하시려면 force 값을 지정해주세요.");

@@ -1,5 +1,6 @@
 package com.example.demo.domain;
 
+import com.example.demo.enums.OrgType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -39,7 +40,7 @@ public class Organization {
     }
 
     public boolean isMember(){
-        return this.orgType.equals("Member");
+        return this.orgType.equals(OrgType.MEMBER.getCode());
     }
 
 }
