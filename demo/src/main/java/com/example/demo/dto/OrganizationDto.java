@@ -1,6 +1,6 @@
-package com.example.demo.entity;
+package com.example.demo.dto;
 
-import com.example.demo.common.MaskingFilter;
+import com.example.demo.vo.OrganizationInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.List;
@@ -13,7 +13,15 @@ import lombok.Data;
  * @since 2022-04-30
  */
 @Data
-public class OrganizationTree {
+public class OrganizationDto {
+    public OrganizationDto(OrganizationInfo node) {
+        this.orgId = node.getOrgId();
+        this.type = node.getType();
+        this.name = node.getName();
+        this.code = node.getCode();
+        this.manager = node.getManager();
+    }
+
     /**
      * 조직 Id
      */
@@ -45,8 +53,5 @@ public class OrganizationTree {
      * 하위 조직(부서 또는 사원)
      */
     @JsonInclude(Include.NON_EMPTY)
-    private List<OrganizationTree> children;
-
-    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = MaskingFilter.class)
-    private Boolean deptOnly;
+    private List<OrganizationDto> children;
 }

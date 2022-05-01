@@ -1,4 +1,4 @@
-package com.example.demo.entity;
+package com.example.demo.vo;
 
 import com.example.demo.dto.DepartmentDto;
 import lombok.Data;
@@ -11,7 +11,7 @@ import lombok.Data;
  */
 @Data
 public class Department {
-    public Department(DepartmentDto deptDto){
+    public Department(DepartmentDto deptDto) {
         this.orgId = deptDto.getOrgId();
         this.deptCode = deptDto.getCode();
         this.deptName = deptDto.getName();
@@ -32,7 +32,7 @@ public class Department {
      * 부서명
      */
     private String deptName;
-    
+
     /**
      * 조직 유형 ("Company", "Division", "Department")
      */

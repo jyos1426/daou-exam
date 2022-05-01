@@ -1,4 +1,4 @@
-package com.example.demo.entity;
+package com.example.demo.vo;
 
 import com.example.demo.dto.MemberDto;
 import lombok.Data;
@@ -11,7 +11,7 @@ import lombok.Data;
  */
 @Data
 public class Member {
-    public Member(MemberDto memberDto){
+    public Member(MemberDto memberDto) {
         this.orgId = memberDto.getOrgId();
         this.memName = memberDto.getName();
         this.manager = memberDto.isManager();

@@ -1,5 +1,8 @@
 package com.example.demo.service;
-import com.example.demo.entity.OrganizationTree;
+
+import com.example.demo.dto.OrganizationDto;
+import com.example.demo.vo.OrganizationInfo;
+
 import com.example.demo.error.ErrorCode;
 import com.example.demo.error.exception.CustomException;
 import com.example.demo.mapper.OrgMapper;
@@ -33,41 +36,64 @@ public class OrgService {
      * @param searchKeyword 검색어
      * @return
      */
-    public OrganizationTree getOrgTree(String deptCode, boolean deptOnly, String searchType,
+    public OrganizationDto getOrgTree(String deptCode, boolean deptOnly, String searchType,
             String searchKeyword) {
 
-        List<OrganizationTree> orgTreeList = orgMapper.getOrgTree(null, false);
-        if(orgTreeList.size() == 0){
-            throw new CustomException(ErrorCode.BAD_REQUEST, "조회된 리스트가 없습니다. 조건을 확인해주세요.");            
+        // 최상위 노드 조회 (searchKeyword 가 있을 경우에는 최상위 노드 = 회사)
+        List<OrganizationInfo> orgTopNodeList =
+                orgMapper.getOrgTopNode(searchKeyword == null ? deptCode : null);
+        if (orgTopNodeList.size() == 0) {
+            throw new CustomException(ErrorCode.BAD_REQUEST,
+                    "'" + deptCode + "'코드로 조회된 리스트가 없습니다. 조건을 확인해주세요.");
         }
 
-        if(!(searchKeyword == null || searchType == null)){
-            if(searchKeyword == null || searchType == null){
-                throw new CustomException(ErrorCode.BAD_REQUEST, "searchkeyword를 입력 시 searchType이 존재해야합니다.");            
+        // searchKeyword와 searchType이 있을 경우, 필터링할 idList Select
+        List<Integer> searchedIdList = null;
+        if (!(searchKeyword == null || searchType == null)) {
+            if (searchKeyword == null || searchType == null) {
+                throw new CustomException(ErrorCode.BAD_REQUEST,
+                        "searchkeyword를 입력 시 searchType이 존재해야합니다.");
             }
-            List<Integer> searchedIdList = orgMapper.getOrgIdListByKeyword(searchType, searchKeyword);
-            
-            return filterOrgTree(orgTreeList.get(0), searchedIdList);
+            searchedIdList = orgMapper.getOrgIdListByKeyword(searchType, searchKeyword);
+            if (searchedIdList.size() == 0) {
+                throw new CustomException(ErrorCode.BAD_REQUEST,
+                        "'" + searchKeyword + "' 검색어로 조회된 리스트가 없습니다.");
+            }
         }
-        return orgTreeList.get(0);
+
+        // 재귀 방식으로 Children 조회
+        OrganizationDto orgTopNode = new OrganizationDto(orgTopNodeList.get(0));
+        orgTopNode.setChildren(
+                getChildrenByParentId(orgTopNode.getOrgId(), deptOnly, searchedIdList));
+
+        return orgTopNode;
     }
-    
+
     /**
-     * 조직도 필터링
+     * 조직 트리 children 조회 함수
      * 
-     * @param upper
-     * @param conditionIds
-     * @return 필터링된 조직도
+     * @param parentOrgId
+     * @param deptOnly
+     * @param searchedIdList
+     * @return
      */
-    private OrganizationTree filterOrgTree(OrganizationTree upper, List<Integer> conditionIds){
-        List<OrganizationTree> filteredChildren = new ArrayList<OrganizationTree>();
-        
-        for(OrganizationTree childTree: upper.getChildren()){
-            if(conditionIds.indexOf(childTree.getOrgId()) >-1){
-                filteredChildren.add( filterOrgTree(childTree, conditionIds) );             
-            }
+    private List<OrganizationDto> getChildrenByParentId(int parentOrgId, boolean deptOnly,
+            List<Integer> searchedIdList) {
+        // List 초기화
+        List<OrganizationDto> filteredChildren = new ArrayList<OrganizationDto>();
+
+        // 조건에 맞는 Child Node Select
+        List<OrganizationInfo> selectedChildrenList =
+                orgMapper.getOrgChildrenNode(parentOrgId, deptOnly, searchedIdList);
+
+        // 재귀 함수 호출, Dto List 로 변환
+        for (OrganizationInfo childNode : selectedChildrenList) {
+            OrganizationDto childDto = new OrganizationDto(childNode);
+            childDto.setChildren(
+                    getChildrenByParentId(childNode.getOrgId(), deptOnly, searchedIdList));
+            filteredChildren.add(childDto);
         }
-        upper.setChildren(filteredChildren);
-        return upper;
+
+        return filteredChildren;
     }
 }

@@ -9,18 +9,16 @@
     -->
 
     <!-- Organization Tree ResultMap -->
-    <resultMap id="dept_tree_node" type="com.example.demo.entity.OrganizationTree" autoMapping="true">
+    <resultMap id="org_tree_node" type="com.example.demo.vo.OrganizationInfo" autoMapping="true">
         <id column="org_id" jdbcType="INTEGER" property="orgId" />
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="type" jdbcType="VARCHAR" property="type" />
         <result column="code" jdbcType="VARCHAR" property="code" />
         <result column="manager" jdbcType="INTEGER" property="manager" />
-        <result column="dept_only" jdbcType="INTEGER" property="deptOnly" />
-        <collection property="children" ofType="com.example.demo.entity.OrganizationTree" column="{parentOrgId=org_id, deptOnly=dept_only}" select="getChildren"></collection>
     </resultMap>
 
     <!-- Organization ResultMap -->
-    <resultMap id="org_map" type="com.example.demo.entity.Organization" autoMapping="true">
+    <resultMap id="org_map" type="com.example.demo.vo.Organization" autoMapping="true">
         <id column="org_id" jdbcType="INTEGER" property="orgId" />
         <result column="org_type" jdbcType="VARCHAR" property="orgType" />
         <result column="parent_org_id" jdbcType="INTEGER" property="parentOrgId" />
@@ -28,7 +26,7 @@
 
     <!-- Organization Tree Columns -->
     <sql id="org_tree_column_list">
-        org_id, name, type, code, manager
+        org_id, name, type, code, manager, parent_org_id
     </sql>
 
     <!-- Organization DB Columns -->
@@ -36,21 +34,14 @@
         org_id, org_type, parent_org_id
     </sql>
 
-    <!-- Select Organization Tree -->
-    <select id="getOrgTree" parameterType="java.util.Map" resultMap="dept_tree_node">
+    <!-- Select Organization Top Node -->
+    <select id="getOrgTopNode" parameterType="java.util.Map" resultMap="org_tree_node">
         SELECT
         <include refid="org_tree_column_list" />
-        , #{deptOnly} AS dept_only
         FROM (
             SELECT o.org_id, o.parent_org_id, dept_name AS name, dept_type AS type, NULL AS manager, dept_code AS code
             FROM organization o
                 JOIN department d on o.org_id = d.org_id
-        <if test="deptOnly == false">
-                UNION ALL
-                SELECT o.org_id, o.parent_org_id, mem_name AS name, 'Manager' AS type, manager, NULL AS code
-                FROM organization o
-                    JOIN member m on o.org_id = m.org_id
-            </if>
         ) uni
         WHERE 1=1
         <!-- Filter By 'deptCode' -->
@@ -65,24 +56,27 @@
     </select>
 
     <!-- Select Children -->
-    <select id="getChildren" parameterType="java.util.Map" resultMap="dept_tree_node">
+    <select id="getOrgChildrenNode" parameterType="java.util.Map" resultMap="org_tree_node">
         SELECT
         <include refid="org_tree_column_list" />
-        , #{deptOnly} AS dept_only
         FROM (
             SELECT o.org_id, o.parent_org_id, dept_name AS name, dept_type AS type, NULL AS manager, dept_code AS code
             FROM organization o
                 JOIN department d on o.org_id = d.org_id
         <!-- Filter By 'deptOnly'-->
         <if test="deptOnly == false">
-                UNION all
-                SELECT o.org_id, o.parent_org_id, mem_name AS name, 'Manager' AS type, manager, NULL AS code
-                FROM organization o
-                    JOIN member m on o.org_id = m.org_id
-            </if>
+            UNION all
+            SELECT o.org_id, o.parent_org_id, mem_name AS name, 'Manager' AS type, manager, NULL AS code
+            FROM organization o
+                JOIN member m on o.org_id = m.org_id
+        </if>
         ) uni
-        <if test="parentOrgId != null">
-            WHERE uni.parent_org_id = #{parentOrgId}
+        WHERE uni.parent_org_id = #{parentOrgId}
+        <if test="filerOrgIds != null">
+            AND uni.org_id IN
+            <foreach item="orgId" index="index" collection="filerOrgIds" open="(" separator="," close=")">
+                #{orgId}
+            </foreach>
         </if>
     </select>
 

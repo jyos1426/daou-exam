@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.OrganizationTree;
+import com.example.demo.dto.OrganizationDto;
 import com.example.demo.service.OrgService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,7 +21,7 @@ import io.swagger.annotations.ApiOperation;
 @Controller
 public class OrgController {
 
-    private OrgService orgService;
+    final private OrgService orgService;
 
     @Autowired
     public OrgController(OrgService orgService) {
@@ -40,22 +40,15 @@ public class OrgController {
     @ApiOperation(value = "조직도 트리 데이터 조회 API")
     @GetMapping("/organizations")
     @ResponseBody
-    public OrganizationTree getOrgTree(
-            @RequestParam(
-                value = "deptCode",
-                required = false ) String deptCode,
-            @RequestParam(
-                value = "deptOnly", 
-                required = false,
-                defaultValue = "false") Boolean deptOnly,
-            @RequestParam(
-                value = "searchType", 
-                required = false) String searchType,
-            @RequestParam(
-                value = "searchKeyword",
-                required = false) String searchKeyword) {
+    public OrganizationDto getOrgTree(
+            @RequestParam(value = "deptCode", required = false) String deptCode,
+            @RequestParam(value = "deptOnly", required = false,
+                    defaultValue = "false") Boolean deptOnly,
+            @RequestParam(value = "searchType", required = false) String searchType,
+            @RequestParam(value = "searchKeyword", required = false) String searchKeyword) {
 
-            OrganizationTree treeData = orgService.getOrgTree(deptCode, deptOnly, searchType, searchKeyword);
-            return treeData;                
+        OrganizationDto treeData =
+                orgService.getOrgTree(deptCode, deptOnly, searchType, searchKeyword);
+        return treeData;
     }
 }

@@ -1,7 +1,7 @@
 package com.example.demo.mapper;
-import org.apache.ibatis.annotations.Mapper;
 
-import com.example.demo.entity.Member;
+import com.example.demo.vo.Member;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 사원 DB Mapper
@@ -13,12 +13,14 @@ import com.example.demo.entity.Member;
 public interface MemberMapper {
     /**
      * 사원 Insert
+     * 
      * @param member
      */
     void insertMember(Member member);
 
     /**
      * 사원 Update
+     * 
      * @param member
      */
     void updateMember(Member member);

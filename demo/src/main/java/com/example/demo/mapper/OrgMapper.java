@@ -3,8 +3,8 @@ package com.example.demo.mapper;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
-import com.example.demo.entity.OrganizationTree;
-import com.example.demo.entity.Organization;
+import com.example.demo.vo.Organization;
+import com.example.demo.vo.OrganizationInfo;
 
 /**
  * 조직 DB Mapper
@@ -16,14 +16,24 @@ import com.example.demo.entity.Organization;
 public interface OrgMapper {
 
     /**
-     * 조직 트리 Select
+     * 조직 트리 최상위 Node Select (부서 테이블만)
      * 
      * @param deptCode
      * @param deptOnly
-     * @param searchType
      * @return
      */
-    List<OrganizationTree> getOrgTree(String deptCode, boolean deptOnly);
+    List<OrganizationInfo> getOrgTopNode(String deptCode);
+
+    /**
+     * 조직 트리 자식 Node Select (옵션에 따라 사원 테이블 포함)
+     * 
+     * @param parentOrgId
+     * @param deptOnly
+     * @param filerOrgIds
+     * @return
+     */
+    List<OrganizationInfo> getOrgChildrenNode(int parentOrgId, boolean deptOnly,
+            List<Integer> filerOrgIds);
 
     /**
      * 검색어와 매칭되는 조직 트리 id 리스트 Select

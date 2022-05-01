@@ -1,11 +1,10 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.MemberDto;
-import com.example.demo.entity.Member;
-import com.example.demo.entity.Organization;
 import com.example.demo.mapper.MemberMapper;
 import com.example.demo.mapper.OrgMapper;
-
+import com.example.demo.vo.Member;
+import com.example.demo.vo.Organization;
 import com.example.demo.error.ErrorCode;
 import com.example.demo.error.exception.CustomException;
 
@@ -41,7 +40,7 @@ public class MemberService {
     public MemberDto addMember(MemberDto member) {
         final String type = "Member";
         Organization orgInsertData = new Organization(type, member);
-        
+
         // Organizaton Table Insert
         orgMapper.insertOrganization(orgInsertData);
         final int orgId = orgInsertData.getOrgId();
@@ -63,14 +62,14 @@ public class MemberService {
      */
     public MemberDto modMember(int orgId, MemberDto member) {
         List<Organization> orgDataList = orgMapper.getOrgById(orgId);
-        
-        if(orgDataList.size() == 0){
-            throw new CustomException(ErrorCode.BAD_REQUEST, "사원("+ orgId +")이 존재하지 않습니다.");            
+
+        if (orgDataList.size() == 0) {
+            throw new CustomException(ErrorCode.BAD_REQUEST, "사원(" + orgId + ")이 존재하지 않습니다.");
         }
 
         // Note. 팀 변경 시 조직도 테이블 함께 변경
         Organization orgData = orgDataList.get(0);
-        if(orgData.getParentOrgId() != member.getParentOrgId()){
+        if (orgData.getParentOrgId() != member.getParentOrgId()) {
             Organization orgUpdateData = new Organization(member);
             orgMapper.updateOrganization(orgUpdateData);
         }
@@ -90,15 +89,15 @@ public class MemberService {
      */
     public int delMember(int orgId) {
         List<Organization> orgDataList = orgMapper.getOrgById(orgId);
-        if(orgDataList.size() == 0){
-            throw new CustomException(ErrorCode.BAD_REQUEST, "사원("+ orgId +")이 존재하지 않습니다.");            
+        if (orgDataList.size() == 0) {
+            throw new CustomException(ErrorCode.BAD_REQUEST, "사원(" + orgId + ")이 존재하지 않습니다.");
         }
 
         Organization orgData = orgDataList.get(0);
-        if(!orgData.getOrgType().equals("Member")){
-            throw new CustomException(ErrorCode.BAD_REQUEST, "코드("+ orgId +")는 사원 데이터가 아닙니다.");
+        if (!orgData.getOrgType().equals("Member")) {
+            throw new CustomException(ErrorCode.BAD_REQUEST, "코드(" + orgId + ")는 사원 데이터가 아닙니다.");
         }
-                
+
         // Note. DELETE CASECADE 로 조직도 삭제 시 함께 DELETE
         orgMapper.deleteOrganization(orgId);
         return orgId;

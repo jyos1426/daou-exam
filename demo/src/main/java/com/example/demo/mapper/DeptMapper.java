@@ -1,7 +1,7 @@
 package com.example.demo.mapper;
-import org.apache.ibatis.annotations.Mapper;
 
-import com.example.demo.entity.Department;
+import com.example.demo.vo.Department;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 부서 DB Mapper
@@ -10,10 +10,11 @@ import com.example.demo.entity.Department;
  * @since 2022-04-30
  */
 @Mapper
-public interface DeptMapper {    
+public interface DeptMapper {
     /**
      * 
      * 부서 Insert
+     * 
      * @param dept
      */
     void insertDepartment(Department dept);
