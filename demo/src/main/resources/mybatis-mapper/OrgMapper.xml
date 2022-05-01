@@ -9,7 +9,7 @@
     -->
 
     <!-- Organization Tree ResultMap -->
-    <resultMap id="org_tree_node" type="com.example.demo.vo.OrganizationInfo" autoMapping="true">
+    <resultMap id="org_tree_node" type="com.example.demo.domain.OrganizationInfo" autoMapping="true">
         <id column="org_id" jdbcType="INTEGER" property="orgId" />
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="type" jdbcType="VARCHAR" property="type" />
@@ -18,7 +18,7 @@
     </resultMap>
 
     <!-- Organization ResultMap -->
-    <resultMap id="org_map" type="com.example.demo.vo.Organization" autoMapping="true">
+    <resultMap id="org_map" type="com.example.demo.domain.Organization" autoMapping="true">
         <id column="org_id" jdbcType="INTEGER" property="orgId" />
         <result column="org_type" jdbcType="VARCHAR" property="orgType" />
         <result column="parent_org_id" jdbcType="INTEGER" property="parentOrgId" />
