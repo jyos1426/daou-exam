@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 조직도 Entity
+ * 조직도 Domain
  *
  * @author hyeon
  * @since 2022-04-30
