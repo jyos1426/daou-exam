@@ -4,7 +4,8 @@ import com.example.demo.domain.OrganizationInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.List;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 조직도 Entity
@@ -12,7 +13,8 @@ import lombok.Data;
  * @author hyeon
  * @since 2022-04-30
  */
-@Data
+@Getter
+@Setter
 public class OrganizationDto {
     public OrganizationDto(OrganizationInfo node) {
         this.orgId = node.getOrgId();

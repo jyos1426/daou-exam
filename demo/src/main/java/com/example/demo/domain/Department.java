@@ -1,6 +1,7 @@
 package com.example.demo.domain;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 부서 Entity
@@ -8,7 +9,8 @@ import lombok.Data;
  * @author hyeon
  * @since 2022-04-30
  */
-@Data
+@Getter
+@Setter
 public class Department {
     /**
      * 조직 Id

@@ -6,7 +6,6 @@ import com.example.demo.service.OrgService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,7 +35,6 @@ public class OrgController {
      */
     @ApiOperation(value = "조직도 트리 데이터 조회 API")
     @GetMapping("/organizations")
-    @ResponseBody
     public OrganizationDto getOrgTree(
             @RequestParam(value = "deptCode", required = false)
             @ApiParam(value = "최상위 부서 코드", required = false) String deptCode,

@@ -78,7 +78,7 @@ public class DeptService {
      * @param dept
      * @return 수정 부서 정보
      */
-    public DepartmentDto modDepartment(int orgId, DepartmentDto dept) {
+    public DepartmentDto modifyDepartment(int orgId, DepartmentDto dept) {
         // Exception. 부서 정보 예외 처리
         List<Organization> orgDataList = orgMapper.getOrgById(orgId);
         if (orgDataList.isEmpty()) {
@@ -86,7 +86,7 @@ public class DeptService {
         }
 
         Organization orgData = orgDataList.get(0);
-        if (orgData.getOrgType().equals("Member")) {
+        if (orgData.isMember()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "코드(" + orgId + ")는 부서 데이터가 아닙니다.");
         }
 
@@ -110,7 +110,7 @@ public class DeptService {
      * @param dept
      * @return 삭제된 부서 Id 리스트
      */
-    public List<Integer> delDepartment(int orgId, boolean force) {
+    public List<Integer> deleteDepartment(int orgId, boolean force) {
         // Exception. 부서 정보 예외 처리
         List<Organization> orgDataList = orgMapper.getOrgById(orgId);
         if (orgDataList.isEmpty()) {
@@ -118,7 +118,7 @@ public class DeptService {
         }
 
         Organization orgData = orgDataList.get(0);
-        if (orgData.getOrgType().equals("Member")) {
+        if (orgData.isMember()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "코드(" + orgId + ")는 부서 데이터가 아닙니다.");
         }
 

@@ -20,6 +20,8 @@ import java.util.List;
  */
 @Service
 public class MemberService {
+    static final String ORG_TYPE_MEMBER = "Member" ;
+
     @Autowired
     MemberMapper memberMapper;
 
@@ -38,7 +40,7 @@ public class MemberService {
      * @return 추가된 사원 정보
      */
     public MemberDto addMember(MemberDto member) {
-        Organization orgInsertData = new Organization("Member", member.getParentOrgId());
+        Organization orgInsertData = new Organization(ORG_TYPE_MEMBER, member.getParentOrgId());
 
         // Exception. 상위 부서 정보 예외처리
         List<Organization> parentOrgList = orgMapper.getOrgById(member.getParentOrgId());
@@ -65,7 +67,7 @@ public class MemberService {
      * @param member 수정할 사원 정보
      * @return 수정된 사원 정보
      */
-    public MemberDto modMember(int orgId, MemberDto member) {
+    public MemberDto modifyMember(int orgId, MemberDto member) {
         // Exception. 사원 정보 예외처리
         List<Organization> orgDataList = orgMapper.getOrgById(orgId);
         if (orgDataList.isEmpty()) {
@@ -73,14 +75,14 @@ public class MemberService {
         }
 
         Organization orgData = orgDataList.get(0);
-        if (!orgData.getOrgType().equals("Member")) {
+        if (orgData.isMember()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "코드(" + orgId + ")는 사원 데이터가 아닙니다.");
         }
 
         // Note. 팀 변경 시 조직도 테이블 함께 변경
         orgData = orgDataList.get(0);
         if (orgData.getParentOrgId() != member.getParentOrgId()) {
-            Organization orgUpdateData = new Organization(member.getOrgId(), "Member", member.getParentOrgId());
+            Organization orgUpdateData = new Organization(member.getOrgId(), ORG_TYPE_MEMBER, member.getParentOrgId());
             orgMapper.updateOrganization(orgUpdateData);
         }
 
@@ -97,7 +99,7 @@ public class MemberService {
      * @param orgId 삭제할 사원의 조직 Id
      * @return 삭제된 사원 Id
      */
-    public int delMember(int orgId) {
+    public int deleteMember(int orgId) {
         // Exception. 사원 정보 예외처리
         List<Organization> orgDataList = orgMapper.getOrgById(orgId);
         if (orgDataList.isEmpty()) {
@@ -105,7 +107,7 @@ public class MemberService {
         }
 
         Organization orgData = orgDataList.get(0);
-        if (!orgData.getOrgType().equals("Member")) {
+        if (orgData.isMember()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "코드(" + orgId + ")는 사원 데이터가 아닙니다.");
         }
 

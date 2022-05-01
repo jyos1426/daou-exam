@@ -1,6 +1,7 @@
 package com.example.demo.domain;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 조직 관계 Entity
@@ -8,7 +9,8 @@ import lombok.Data;
  * @author hyeon
  * @since 2022-04-30
  */
-@Data
+@Getter
+@Setter
 public class Organization {
     /**
      * 조직 Id
@@ -34,6 +36,10 @@ public class Organization {
         this.orgType = type;
         this.orgId = orgId;
         this.parentOrgId = parentOrgId;
+    }
+
+    public boolean isMember(){
+        return this.orgType.equals("Member");
     }
 
 }
