@@ -1,6 +1,6 @@
 package com.example.demo.mapper;
 
-import com.example.demo.vo.Member;
+import com.example.demo.domain.Member;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

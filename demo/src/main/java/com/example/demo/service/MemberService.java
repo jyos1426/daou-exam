@@ -1,10 +1,10 @@
 package com.example.demo.service;
 
+import com.example.demo.domain.Member;
+import com.example.demo.domain.Organization;
 import com.example.demo.dto.MemberDto;
 import com.example.demo.mapper.MemberMapper;
 import com.example.demo.mapper.OrgMapper;
-import com.example.demo.vo.Member;
-import com.example.demo.vo.Organization;
 import com.example.demo.error.ErrorCode;
 import com.example.demo.error.exception.CustomException;
 
@@ -68,7 +68,7 @@ public class MemberService {
     public MemberDto modMember(int orgId, MemberDto member) {
         // Exception. 사원 정보 예외처리
         List<Organization> orgDataList = orgMapper.getOrgById(orgId);
-        if (orgDataList.size() == 0) {
+        if (orgDataList.isEmpty()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "사원(" + orgId + ")이 존재하지 않습니다.");
         }
 
@@ -100,7 +100,7 @@ public class MemberService {
     public int delMember(int orgId) {
         // Exception. 사원 정보 예외처리
         List<Organization> orgDataList = orgMapper.getOrgById(orgId);
-        if (orgDataList.size() == 0) {
+        if (orgDataList.isEmpty()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "사원(" + orgId + ")이 존재하지 않습니다.");
         }
 

@@ -3,8 +3,8 @@ package com.example.demo.mapper;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
-import com.example.demo.vo.Organization;
-import com.example.demo.vo.OrganizationInfo;
+import com.example.demo.domain.Organization;
+import com.example.demo.domain.OrganizationInfo;
 
 /**
  * 조직 DB Mapper

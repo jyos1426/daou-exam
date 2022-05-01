@@ -1,6 +1,6 @@
 package com.example.demo.dto;
 
-import com.example.demo.vo.OrganizationInfo;
+import com.example.demo.domain.OrganizationInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.List;

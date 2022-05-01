@@ -1,8 +1,7 @@
 package com.example.demo.service;
 
+import com.example.demo.domain.OrganizationInfo;
 import com.example.demo.dto.OrganizationDto;
-import com.example.demo.vo.OrganizationInfo;
-
 import com.example.demo.error.ErrorCode;
 import com.example.demo.error.exception.CustomException;
 import com.example.demo.mapper.OrgMapper;

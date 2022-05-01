@@ -1,10 +1,10 @@
 package com.example.demo.service;
 
+import com.example.demo.domain.Department;
+import com.example.demo.domain.Organization;
 import com.example.demo.dto.DepartmentDto;
 import com.example.demo.mapper.DeptMapper;
 import com.example.demo.mapper.OrgMapper;
-import com.example.demo.vo.Department;
-import com.example.demo.vo.Organization;
 import com.example.demo.error.ErrorCode;
 import com.example.demo.error.exception.CustomException;
 
@@ -81,7 +81,7 @@ public class DeptService {
     public DepartmentDto modDepartment(int orgId, DepartmentDto dept) {
         // Exception. 부서 정보 예외 처리
         List<Organization> orgDataList = orgMapper.getOrgById(orgId);
-        if (orgDataList.size() == 0) {
+        if (orgDataList.isEmpty()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "부서(" + orgId + ")가 존재하지 않습니다.");
         }
 
@@ -113,7 +113,7 @@ public class DeptService {
     public List<Integer> delDepartment(int orgId, boolean force) {
         // Exception. 부서 정보 예외 처리
         List<Organization> orgDataList = orgMapper.getOrgById(orgId);
-        if (orgDataList.size() == 0) {
+        if (orgDataList.isEmpty()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "부서(" + orgId + ")가 존재하지 않습니다.");
         }
 
