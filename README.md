@@ -45,22 +45,8 @@ mybatis.type-aliases-package=com.example.demo.vo
 spring.mvc.pathmatch.matching-strategy=ANT_PATH_MATCHER
 ```
 5. Java 프로젝트를 실행합니다.
-6. Swagger 페이지에 접속하여, api 문서를 확인하고 요청을 테스트 합니다.
+6. Swagger 페이지에 접속하여, api 문서를 확인하고 요청을 테스트 할 수 있습니다.
 
 - `http://localhost:{port}/swagger-ui/index.html`
 
-## 4. API
-
-- ## 조직도 조회 GET /org/organizations 
-1. Parameters
-
-| Key | Type | Example | required |  Comment |
-| --- | --- | --- | --- | --- |
-| deptCode | String | "A10000" | false | 최상위 부서 선택 |
-| deptOnly | boolean | true | false |  부서만 검색 여부, 없을 시 default 최상위 부서 (회사) |
-| searchType | String | "member" / "dept" | false  | 검색어 적용 대상 |
-| searchKeyword | String | "플랫폼" | false  | 검색어 |
-
-```js
-/org/organizations?deptCode=A00000&deptOnly=true
-```
+![image](https://user-images.githubusercontent.com/17894894/166136584-4efc72a8-4aee-424a-9bbe-71483de9fa7b.png)
