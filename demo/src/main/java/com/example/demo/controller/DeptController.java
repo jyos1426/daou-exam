@@ -67,12 +67,8 @@ public class DeptController {
      */
     @DeleteMapping("/dept/{orgId}")
     @ResponseBody
-    public List<Integer> delDepartment(
-        @PathVariable int orgId, 
-        @RequestParam(
-            value = "force", 
-            required = false,
-            defaultValue = "false") Boolean force) {
+    public List<Integer> delDepartment(@PathVariable int orgId, @RequestParam(value = "force",
+            required = false, defaultValue = "false") Boolean force) {
         return deptService.delDepartment(orgId, force);
     }
 }
